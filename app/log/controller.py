@@ -2,11 +2,13 @@ from datetime import datetime
 from flask import request, jsonify
 from app.log.service import LogService
 from app import app, db
+from flask_jwt_extended import jwt_required
 
 LogService = LogService(db)
 
 
 @app.route('/logs', methods=['POST'])
+@jwt_required()
 def upload_log_file():
     file = request.files.get("file")
 
@@ -19,6 +21,7 @@ def upload_log_file():
 
 
 @app.route('/logs', methods=['GET'])
+@jwt_required()
 def get_all_logs():
     logs = LogService.get_all()
     return jsonify(logs), 200
@@ -31,7 +34,8 @@ def parse_datetime(date_str: str) -> datetime | None:
         return None
 
 
-@app.route('/logs/<start_datetime>/<end_datetime>')
+@app.route('/logs/<string:start_datetime>/<string:end_datetime>')
+@jwt_required()
 def get_logs_by_time(start_datetime: str, end_datetime: str):
     start_date = parse_datetime(start_datetime)
     end_date = parse_datetime(end_datetime)
@@ -44,12 +48,14 @@ def get_logs_by_time(start_datetime: str, end_datetime: str):
 
 
 @app.route('/logs/<fragment>')
+@jwt_required()
 def get_logs_by_fragment(fragment: str):
     logs = LogService.get_logs_by_fragment(fragment)
     return jsonify(logs), 200
 
 
-@app.route('/logs/<fragment>/<start_datetime>/<end_datetime>')
+@app.route('/logs/<string:fragment>/<string:start_datetime>/<string:end_datetime>')
+@jwt_required()
 def get_logs_by_fragment_and_by_time(fragment: str, start_datetime: str, end_datetime: str):
     start_date = parse_datetime(start_datetime)
     end_date = parse_datetime(end_datetime)

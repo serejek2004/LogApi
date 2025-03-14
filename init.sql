@@ -1,0 +1,12 @@
+CREATE TABLE IF NOT EXISTS "user" (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(80) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS "log" (
+    id SERIAL PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    log_level VARCHAR(10) NOT NULL,
+    log_data TEXT NOT NULL
+);

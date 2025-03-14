@@ -1,0 +1,28 @@
+services:
+  postgres_db:
+    build:
+      context: .
+      dockerfile: dockerfile.db
+    environment:
+      POSTGRES_USER: mac
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: FlaskLogApi
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  flask_api:
+    build:
+      context: .
+      dockerfile: dockerfile.api
+    container_name: log_api
+    environment:
+      - DATABASE_URL=postgresql://mac:1234@postgres_db:5432/FlaskLogApi
+    ports:
+      - "5001:5000"
+    depends_on:
+      - postgres_db
+
+volumes:
+  postgres_data:

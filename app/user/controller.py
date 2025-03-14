@@ -10,18 +10,18 @@ UserService = UserService(db)
 def register():
     data = request.get_json()
     user_dto = UserDTO.from_request(data)
-    user, response, status_code = UserService.register(user_dto)
+    user, status_code = UserService.register(user_dto)
 
-    return jsonify({"message": f"{response}", "user": user}), status_code
+    return jsonify(user.to_dict()), status_code
 
 
 @app.route('/user/login', methods=['POST'])
 def login():
     data = request.get_json()
     user_dto = UserDTO.from_request(data)
-    user, response, status_code = UserService.login(user_dto)
+    access_token, status_code = UserService.login(user_dto)
 
-    return jsonify({"message": f"{response}", "user": user}), status_code
+    return jsonify({"access_token": access_token}), status_code
 
 
 @app.route('/user', methods=['GET'])
